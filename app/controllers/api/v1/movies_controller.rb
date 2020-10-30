@@ -1,11 +1,12 @@
 module Api
   module V1
     class MoviesController < ApplicationController
+      before_action :authorize_access_request!
       before_action :set_movie, only: [:show, :update, :destroy]
 
       # GET /movies
       def index
-        @movies = Movie.all
+        @movies = current_user.movie.all
 
         render json: @movies
       end
@@ -17,7 +18,7 @@ module Api
 
       # POST /movies
       def create
-        @movie = Movie.new(movie_params)
+        @movie = current_user.movies.build(movie_params)
 
         if @movie.save
           render json: @movie, status: :created, location: @movie
@@ -43,12 +44,12 @@ module Api
       private
         # Use callbacks to share common setup or constraints between actions.
         def set_movie
-          @movie = Movie.find(params[:id])
+          @movie = current_user.movies.find(params[:id])
         end
 
         # Only allow a trusted parameter "white list" through.
         def movie_params
-          params.require(:movie).permit(:title, :year, :user_id, :director_id)
+          params.require(:movie).permit(:title, :year, :director_id)
         end
     end
   end

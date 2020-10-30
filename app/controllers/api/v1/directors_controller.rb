@@ -1,6 +1,7 @@
 module Api
 	module V1
-		class DirectorsController < ApplicationController
+    class DirectorsController < ApplicationController
+      before_action :authorize_access_request!, except: [:show, :index]
 			before_action :set_director, only: [:show, :update, :destroy]
 
 			# GET /directors
@@ -48,7 +49,7 @@ module Api
 
 				# Only allow a trusted parameter "white list" through.
 				def director_params
-					params.require(:director).permit(:name, :user_id)
+					params.require(:director).permit(:name)
 				end
 		end
 	end
